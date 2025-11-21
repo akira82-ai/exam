@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线考试系统</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="lib/aos/aos.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>
+                在线考试系统
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="homeLink">
+                            <i class="fas fa-home me-1"></i>首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="examLink">
+                            <i class="fas fa-pencil-alt me-1"></i>开始考试
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="resultsLink">
+                            <i class="fas fa-chart-bar me-1"></i>成绩报表
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="errorsLink">
+                            <i class="fas fa-exclamation-triangle me-1"></i>错题集
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="homeSection" class="section active">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="text-center hero-section" data-aos="fade-up">
+                            <h1 class="display-4 fw-bold text-primary mb-4">
+                                <i class="fas fa-graduation-cap me-3"></i>
+                                欢迎使用在线考试系统
+                            </h1>
+                            <p class="lead mb-4">
+                                智能化的在线考试平台，支持多科目、多知识点的随机考试，
+                                帮助您高效学习和测试知识掌握情况。
+                            </p>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <button class="btn btn-primary btn-lg" id="startExamBtn">
+                                    <i class="fas fa-play me-2"></i>开始考试
+                                </button>
+                                <button class="btn btn-outline-primary btn-lg" id="viewResultsBtn">
+                                    <i class="fas fa-chart-line me-2"></i>查看成绩
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="row mt-5">
+                    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card h-100 feature-card">
+                            <div class="card-body text-center">
+                                <div class="feature-icon mb-3">
+                                    <i class="fas fa-random fa-3x text-primary"></i>
+                                </div>
+                                <h5 class="card-title">随机出题</h5>
+                                <p class="card-text">智能随机选择题目，每次考试都是全新的挑战</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card h-100 feature-card">
+                            <div class="card-body text-center">
+                                <div class="feature-icon mb-3">
+                                    <i class="fas fa-chart-line fa-3x text-success"></i>
+                                </div>
+                                <h5 class="card-title">成绩分析</h5>
+                                <p class="card-text">详细的成绩统计和趋势分析，了解学习进度</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card h-100 feature-card">
+                            <div class="card-body text-center">
+                                <div class="feature-icon mb-3">
+                                    <i class="fas fa-redo fa-3x text-warning"></i>
+                                </div>
+                                <h5 class="card-title">错题复习</h5>
+                                <p class="card-text">自动收集错题，方便针对性复习和巩固</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subject Selection Section -->
+        <section id="subjectSection" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header" data-aos="fade-up">
+                            <h2 class="text-center mb-4">选择科目</h2>
+                            <div class="breadcrumb">
+                                <span class="breadcrumb-item active">首页</span>
+                                <span class="breadcrumb-item">选择科目</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="subjectCards">
+                    <!-- Subject cards will be dynamically generated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Topic Selection Section -->
+        <section id="topicSection" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header" data-aos="fade-up">
+                            <h2 class="text-center mb-4">选择知识点</h2>
+                            <div class="breadcrumb">
+                                <span class="breadcrumb-item">首页</span>
+                                <span class="breadcrumb-item" id="breadcrumbSubject">科目</span>
+                                <span class="breadcrumb-item active">选择知识点</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="topicCards">
+                    <!-- Topic cards will be dynamically generated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Exam Section -->
+        <section id="examSection" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header" data-aos="fade-up">
+                            <h2 class="text-center mb-4">考试进行中</h2>
+                            <div class="breadcrumb">
+                                <span class="breadcrumb-item">首页</span>
+                                <span class="breadcrumb-item" id="examBreadcrumbSubject">科目</span>
+                                <span class="breadcrumb-item" id="examBreadcrumbTopic">知识点</span>
+                                <span class="breadcrumb-item active">考试</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Exam Progress -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card exam-progress-card" data-aos="fade-up">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h5 class="card-title mb-0">考试进度</h5>
+                                        <p class="text-muted mb-0">
+                                            题目 <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="timer">
+                                                <i class="fas fa-clock me-2"></i>
+                                                <span id="examTimer">00:00</span>
+                                            </div>
+                                            <button class="btn btn-outline-danger" id="submitExamBtn">
+                                                <i class="fas fa-paper-plane me-2"></i>交卷
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress mt-3">
+                                    <div class="progress-bar" id="examProgressBar" role="progressbar" style="width: 10%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Container -->
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="card question-card" data-aos="fade-up">
+                            <div class="card-body">
+                                <div class="question-content">
+                                    <h4 class="question-text" id="questionText">
+                                        <!-- Question will be loaded here -->
+                                    </h4>
+                                </div>
+                                <div class="options-container mt-4" id="optionsContainer">
+                                    <!-- Options will be loaded here -->
+                                </div>
+                                <div class="question-navigation mt-4">
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-outline-secondary" id="prevQuestionBtn" disabled>
+                                            <i class="fas fa-chevron-left me-2"></i>上一题
+                                        </button>
+                                        <button class="btn btn-primary" id="nextQuestionBtn">
+                                            下一题<i class="fas fa-chevron-right ms-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header" data-aos="fade-up">
+                            <h2 class="text-center mb-4">考试结果</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Result Summary -->
+                <div class="row mb-4">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="card result-summary-card" data-aos="fade-up">
+                            <div class="card-body text-center">
+                                <h3 class="result-title mb-4">考试完成！</h3>
+                                <div class="result-score">
+                                    <div class="score-circle">
+                                        <span class="score-number" id="finalScore">0</span>
+                                        <span class="score-text">分</span>
+                                    </div>
+                                </div>
+                                <div class="result-details mt-4">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="result-stat">
+                                                <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                                                <h5 class="text-success" id="correctCount">0</h5>
+                                                <p class="text-muted">正确</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="result-stat">
+                                                <i class="fas fa-times-circle text-danger fa-2x mb-2"></i>
+                                                <h5 class="text-danger" id="wrongCount">0</h5>
+                                                <p class="text-muted">错误</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="result-stat">
+                                                <i class="fas fa-clock text-primary fa-2x mb-2"></i>
+                                                <h5 class="text-primary" id="totalTime">00:00</h5>
+                                                <p class="text-muted">用时</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="result-actions mt-4">
+                                    <button class="btn btn-primary me-2" id="reviewErrorsBtn">
+                                        <i class="fas fa-eye me-2"></i>查看错题
+                                    </button>
+                                    <button class="btn btn-outline-primary" id="newExamBtn">
+                                        <i class="fas fa-redo me-2"></i>新的考试
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reportsSection" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header" data-aos="fade-up">
+                            <h2 class="text-center mb-4">成绩报表</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-primary">
+                                    <i class="fas fa-clipboard-list fa-2x"></i>
+                                </div>
+                                <h5 class="card-title">总考试次数</h5>
+                                <p class="card-text stat-number" id="totalExams">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-success">
+                                    <i class="fas fa-chart-line fa-2x"></i>
+                                </div>
+                                <h5 class="card-title">平均分数</h5>
+                                <p class="card-text stat-number" id="averageScore">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-warning">
+                                    <i class="fas fa-trophy fa-2x"></i>
+                                </div>
+                                <h5 class="card-title">最高分数</h5>
+                                <p class="card-text stat-number" id="highestScore">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="400">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-info">
+                                    <i class="fas fa-book fa-2x"></i>
+                                </div>
+                                <h5 class="card-title">学习科目</h5>
+                                <p class="card-text stat-number" id="subjectCount">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <div class="col-lg-12 mb-4" data-aos="fade-up">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">成绩趋势</h5>
+                                <canvas id="scoreTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- History Table -->
+                <div class="row">
+                    <div class="col-12" data-aos="fade-up">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">考试历史</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>日期</th>
+                                                <th>科目</th>
+                                                <th>知识点</th>
+                                                <th>正确数</th>
+                                                <th>错误数</th>
+                                                <th>分数</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historyTableBody">
+                                            <!-- History records will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Errors Section -->
+        <section id="errorsSection" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-header" data-aos="fade-up">
+                            <h2 class="text-center mb-4">错题集</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-danger">
+                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                </div>
+                                <h5 class="stat-number" id="totalErrors">0</h5>
+                                <p class="text-muted">错题总数</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-warning">
+                                    <i class="fas fa-book fa-2x"></i>
+                                </div>
+                                <h5 class="stat-number" id="errorSubjects">0</h5>
+                                <p class="text-muted">涉及科目</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-info">
+                                    <i class="fas fa-lightbulb fa-2x"></i>
+                                </div>
+                                <h5 class="stat-number" id="errorTopics">0</h5>
+                                <p class="text-muted">涉及知识点</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3" data-aos="fade-up" data-aos-delay="400">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-icon text-success">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                                <h5 class="stat-number" id="masteredErrors">0</h5>
+                                <p class="text-muted">已掌握</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card error-filters-card" data-aos="fade-up">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        <label for="subjectFilter" class="form-label">科目筛选</label>
+                                        <select class="form-select" id="subjectFilter">
+                                            <option value="">全部科目</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="topicFilter" class="form-label">知识点筛选</label>
+                                        <select class="form-select" id="topicFilter">
+                                            <option value="">全部知识点</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="dateFilter" class="form-label">时间筛选</label>
+                                        <select class="form-select" id="dateFilter">
+                                            <option value="">全部时间</option>
+                                            <option value="today">今天</option>
+                                            <option value="week">本周</option>
+                                            <option value="month">本月</option>
+                                            <option value="recent">最近3天</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="masteryFilter" class="form-label">掌握状态</label>
+                                        <select class="form-select" id="masteryFilter">
+                                            <option value="">全部状态</option>
+                                            <option value="unmastered">未掌握</option>
+                                            <option value="mastered">已掌握</option>
+                                            <option value="reviewing">复习中</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="difficultyFilter" class="form-label">错误频率</label>
+                                        <select class="form-select" id="difficultyFilter">
+                                            <option value="">全部频率</option>
+                                            <option value="high">高频错误</option>
+                                            <option value="medium">中频错误</option>
+                                            <option value="low">低频错误</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">&nbsp;</label>
+                                        <div class="btn-group w-100">
+                                            <button class="btn btn-outline-primary" onclick="errors.applyFilters()">
+                                                <i class="fas fa-filter"></i> 筛选
+                                            </button>
+                                            <button class="btn btn-outline-secondary" onclick="errors.resetFilters()">
+                                                <i class="fas fa-redo"></i> 重置
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Error Questions List -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" data-aos="fade-up">
+                            <div class="card-body">
+                                <div class="error-list-header">
+                                    <h5 class="error-list-title">错题列表</h5>
+                                    <div class="error-list-actions">
+                                        <button class="btn btn-outline-success" onclick="errors.practiceErrors()">
+                                            <i class="fas fa-play"></i> 练习错题
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="errors.clearMastered()">
+                                            <i class="fas fa-trash"></i> 清除已掌握
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="errorsList" class="error-questions-container">
+                                    <!-- 错题将在这里动态加载 -->
+                                    <div class="text-center text-muted py-5">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>暂无错题记录</p>
+                                        <small>完成考试后，答错的题目会自动收录到这里</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 在线考试系统. 保留所有权利.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation -->
+    <script src="lib/aos/aos.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="lib/chart.js/chart.umd.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/app.js"></script>
+    <script src="js/dataLoader.js"></script>
+    <script src="js/exam.js"></script>
+    <script src="js/result.js"></script>
+    <script src="js/report.js"></script>
+    <script src="js/errors.js"></script>
+</body>
+</html>
