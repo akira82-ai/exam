@@ -311,19 +311,54 @@ class Result {
      */
     async scanErrorDirectory() {
         try {
-            // 直接扫描已知的错题文件
-            const errorFiles = [
+            console.log('开始动态扫描错题目录...');
+            
+            // 通过API获取错题文件列表
+            const response = await fetch('/api/list-error-files');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || '获取错题文件列表失败');
+            }
+            
+            const errorFiles = result.files;
+            console.log(`发现 ${errorFiles.length} 个错题文件:`, errorFiles);
+            
+            // 加载每个错题文件
+            for (const filePath of errorFiles) {
+                await this.loadErrorFile(filePath);
+            }
+            
+            console.log('错题目录扫描完成');
+        } catch (error) {
+            console.error('扫描错题目录失败:', error);
+            // 如果API失败，尝试使用备用方案
+            console.log('尝试备用扫描方案...');
+            await this.fallbackScanErrorDirectory();
+        }
+    }
+
+    /**
+     * 备用扫描方案（当API不可用时使用）
+     */
+    async fallbackScanErrorDirectory() {
+        try {
+            // 尝试扫描一些常见的错题文件路径
+            const commonErrorFiles = [
                 '英语/2025-11-20_18-38-10.txt',
                 '英语/2025-11-21_10-49-58.txt',
                 '英语/2025-11-21_12-46-39.txt',
                 '英语/2025-11-21_14-18-33.txt'
             ];
             
-            for (const filePath of errorFiles) {
+            for (const filePath of commonErrorFiles) {
                 await this.loadErrorFile(filePath);
             }
         } catch (error) {
-            console.error('扫描错题目录失败:', error);
+            console.error('备用扫描方案也失败:', error);
         }
     }
 
