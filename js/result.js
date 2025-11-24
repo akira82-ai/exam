@@ -95,10 +95,11 @@ class Result {
      */
     saveToLocalStorage() {
         try {
-            localStorage.setItem('examResults', JSON.stringify(this.results));
+            // 不再保存考试结果到localStorage，完全从log目录读取
+            console.log('考试结果仅保存到文件系统，不再使用localStorage');
             // 不再保存错题数据到localStorage，错题只从文件读取
         } catch (error) {
-            console.warn('保存到本地存储失败:', error);
+            console.warn('本地存储操作失败:', error);
         }
     }
 
@@ -107,21 +108,17 @@ class Result {
      */
     loadFromLocalStorage() {
         try {
-            const savedResults = localStorage.getItem('examResults');
+            // 清理localStorage中的考试结果数据，完全从log目录读取
+            localStorage.removeItem('examResults');
+            console.log('已清理localStorage中的考试历史数据');
             
-            if (savedResults) {
-                const results = JSON.parse(savedResults);
-                // 只保留有实际文件支持的考试结果
-                this.results = results.filter(result => {
-                    // 这里可以添加验证逻辑，确保结果对应的文件存在
-                    return true; // 暂时保留所有结果
-                });
-            }
+            // 考试结果完全从log目录动态加载，不再使用localStorage
+            this.results = [];
             
             // 错题数据不从localStorage读取，完全从文件系统加载
             this.errorRecords = [];
         } catch (error) {
-            console.warn('从本地存储加载失败:', error);
+            console.warn('清理本地存储失败:', error);
             this.results = [];
             this.errorRecords = [];
         }
@@ -272,6 +269,9 @@ class Result {
             // 先从本地存储加载
             this.loadFromLocalStorage();
             
+            // 从log目录动态加载成绩数据
+            await this.loadLogFiles();
+            
             // 加载已有的错题文件
             await this.loadExistingErrorFiles();
             
@@ -282,6 +282,133 @@ class Result {
         } catch (error) {
             console.error('加载已有结果失败:', error);
             return false;
+        }
+    }
+
+    /**
+     * 从log目录加载成绩数据
+     */
+    async loadLogFiles() {
+        try {
+            console.log('开始动态扫描log目录...');
+            
+            // 通过API获取log文件列表
+            const response = await fetch('/api/list-log-files');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || '获取log文件列表失败');
+            }
+            
+            const logFiles = result.files;
+            console.log(`发现 ${logFiles.length} 个log文件:`, logFiles);
+            
+            // 加载每个log文件
+            for (const filePath of logFiles) {
+                await this.loadLogFile(filePath);
+            }
+            
+            console.log('log目录扫描完成');
+        } catch (error) {
+            console.error('扫描log目录失败:', error);
+            // 如果API失败，尝试使用备用方案
+            console.log('尝试备用扫描方案...');
+            await this.fallbackLoadLogFiles();
+        }
+    }
+
+    /**
+     * 备用log扫描方案（当API不可用时使用）
+     */
+    async fallbackLoadLogFiles() {
+        try {
+            // 尝试扫描一些常见的log文件路径
+            const commonLogFiles = [
+                '英语/2025-11-20_18-38-10.txt',
+                '英语/2025-11-21_10-49-58.txt',
+                '英语/2025-11-21_12-46-39.txt',
+                '英语/2025-11-21_14-18-33.txt'
+            ];
+            
+            for (const filePath of commonLogFiles) {
+                await this.loadLogFile(filePath);
+            }
+        } catch (error) {
+            console.error('备用log扫描方案也失败:', error);
+        }
+    }
+
+    /**
+     * 加载单个log文件
+     */
+    async loadLogFile(filePath) {
+        try {
+            console.log(`开始读取log文件: ${filePath}`);
+            
+            // 读取log文件内容
+            const response = await fetch(this.logPath + filePath);
+            if (!response.ok) {
+                console.warn(`无法加载log文件: ${filePath}, 状态码: ${response.status}`);
+                return;
+            }
+            
+            const content = await response.text();
+            if (!content.trim()) {
+                console.warn(`文件为空: ${filePath}`);
+                return;
+            }
+            
+            console.log(`文件 ${filePath} 读取成功，内容长度: ${content.length}`);
+            
+            // 解析文件路径
+            const [subject, fileName] = filePath.split('/');
+            
+            // 从文件名提取日期和时间
+            const dateMatch = fileName.match(/(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})/);
+            const date = dateMatch ? 
+                new Date(`${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]} ${dateMatch[4]}:${dateMatch[5]}:${dateMatch[6]}`) : 
+                new Date();
+            
+            // 解析log内容
+            const lines = content.split('\n').filter(line => line.trim());
+            console.log(`文件 ${filePath} 包含 ${lines.length} 行有效数据`);
+            
+            lines.forEach((line, index) => {
+                const parts = line.split('§');
+                if (parts.length >= 7) {
+                    const [dateStr, timeStr, subject, topic, correctCount, wrongCount, score] = parts;
+                    
+                    // 创建结果对象
+                    const result = {
+                        id: `${subject}-${fileName}-${index}`,
+                        date: dateStr,
+                        time: timeStr,
+                        subject: subject,
+                        topic: topic || '默认知识点',
+                        correctCount: parseInt(correctCount) || 0,
+                        wrongCount: parseInt(wrongCount) || 0,
+                        score: parseInt(score) || 0,
+                        totalTime: '00:00', // log文件中没有时间信息，使用默认值
+                        timestamp: date.getTime()
+                    };
+                    
+                    // 检查是否已存在相同的结果（避免重复）
+                    // 使用更精确的ID来判断重复，而不是仅靠日期、科目和知识点
+                    const existingIndex = this.results.findIndex(r => r.id === result.id);
+                    
+                    if (existingIndex === -1) {
+                        this.results.push(result);
+                        console.log(`成功加载成绩记录: ${subject}-${topic}, 分数: ${score}, ID: ${result.id}`);
+                    } else {
+                        console.log(`跳过重复记录: ${subject}-${topic}, ID: ${result.id}`);
+                    }
+                }
+            });
+        } catch (error) {
+            console.error(`加载log文件失败 ${filePath}:`, error);
         }
     }
 
@@ -612,8 +739,20 @@ class Result {
     clearAllData() {
         this.results = [];
         this.errorRecords = [];
-        localStorage.removeItem('examResults');
-        // 错题数据不需要清除localStorage，因为不再存储在那里
+        this.clearLocalStorage();
+    }
+
+    /**
+     * 清理localStorage中的残留数据
+     */
+    clearLocalStorage() {
+        try {
+            // 清理所有考试相关的localStorage数据
+            localStorage.removeItem('examResults');
+            console.log('已清理localStorage中的所有考试相关数据');
+        } catch (error) {
+            console.warn('清理localStorage失败:', error);
+        }
     }
 }
 

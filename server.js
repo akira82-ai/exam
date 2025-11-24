@@ -190,6 +190,8 @@ function handleApiRequest(req, res, pathname, method) {
     saveFile(req, res);
   } else if (method === 'GET' && pathname === '/api/list-error-files') {
     listErrorFiles(req, res);
+  } else if (method === 'GET' && pathname === '/api/list-log-files') {
+    listLogFiles(req, res);
   } else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'API endpoint not found' }));
@@ -294,6 +296,61 @@ function listErrorFiles(req, res) {
     
   } catch (error) {
     console.error('扫描错题目录失败:', error);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      success: false, 
+      error: 'Internal server error' 
+    }));
+  }
+}
+
+/**
+ * 列出日志目录下的所有文件
+ */
+function listLogFiles(req, res) {
+  try {
+    const logDir = path.join(__dirname, 'log');
+    const logFiles = [];
+    
+    // 递归扫描目录
+    function scanDirectory(dir, relativePath = '') {
+      if (!fs.existsSync(dir)) {
+        console.warn(`目录不存在: ${dir}`);
+        return;
+      }
+      
+      const items = fs.readdirSync(dir);
+      
+      for (const item of items) {
+        const itemPath = path.join(dir, item);
+        const itemRelativePath = path.join(relativePath, item);
+        const stats = fs.statSync(itemPath);
+        
+        if (stats.isDirectory()) {
+          // 递归扫描子目录
+          scanDirectory(itemPath, itemRelativePath);
+        } else if (stats.isFile() && item.endsWith('.txt')) {
+          // 只添加 .txt 文件
+          logFiles.push(itemRelativePath);
+        }
+      }
+    }
+    
+    // 开始扫描
+    scanDirectory(logDir);
+    
+    // 按文件名排序
+    logFiles.sort();
+    
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      success: true, 
+      files: logFiles,
+      count: logFiles.length
+    }));
+    
+  } catch (error) {
+    console.error('扫描日志目录失败:', error);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ 
       success: false, 
